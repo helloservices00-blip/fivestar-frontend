@@ -26,7 +26,7 @@ export const loginUser = async ({ email, password }) => {
   try {
     const res = await axios({
       method: "POST",
-      url: "https://multi-vendor-app-ey66.onrender.com/api/auth/login",
+      url: "https://fivestar-backend.onrender.com/api/auth/login",
       headers: {
         "Content-Type": "application/json",
       },
