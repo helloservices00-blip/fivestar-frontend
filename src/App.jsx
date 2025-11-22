@@ -1,58 +1,66 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
+import { getShops, getShopProducts } from "./api";
 
-// Pages
-import Home from "./pages/Home.jsx";
-import LoginRegister from "./pages/LoginRegister.jsx";
-import ProductDetails from "./pages/ProductDetails.jsx";
-import CartPage from "./pages/CartPage.jsx";
-import Checkout from "./pages/Checkout.jsx";
-import Orders from "./pages/Orders.jsx";
-import CategoryPage from "./pages/CategoryPage.jsx";
-import CategoryProducts from "./pages/CategoryProducts.jsx";
-import Profile from "./pages/Profile.jsx";
-import Wishlist from "./pages/Wishlist.jsx";
-import SearchResults from "./pages/SearchResults.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
-import NotFound from "./pages/NotFound.jsx";
+// Home page: list all shops
+function Home() {
+  const [shops, setShops] = useState([]);
 
-// Context
-import { AuthProvider } from "./context/AuthContext.jsx";
+  useEffect(() => {
+    getShops().then(setShops);
+  }, []);
 
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>All Shops</h1>
+      <ul>
+        {shops.map(shop => (
+          <li key={shop._id}>
+            <Link to={`/shop/${shop._id}`}>{shop.shopName}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// Shop page: show categories and products
+function Shop() {
+  const { shopId } = useParams();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    getShopProducts(shopId).then(setCategories);
+  }, [shopId]);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Shop Products</h1>
+      {categories.length === 0 && <p>No products available.</p>}
+      {categories.map(cat => (
+        <div key={cat.name} style={{ marginBottom: "20px" }}>
+          <h2>{cat.name}</h2>
+          <ul>
+            {cat.items.map(item => (
+              <li key={item.name}>
+                {item.name} — ₹{item.price}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// App Router
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          {/* Home and Auth */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginRegister />} />
-
-          {/* User pages */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/search" element={<SearchResults />} />
-
-          {/* Orders and Cart */}
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-
-          {/* Products */}
-          <Route path="/product/:id" element={<ProductDetails />} />
-
-          {/* Categories */}
-          <Route path="/categories" element={<CategoryPage />} />
-          <Route path="/category/:name" element={<CategoryProducts />} />
-
-          {/* Admin */}
-          <Route path="/admin" element={<AdminDashboard />} />
-
-          {/* 404 fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/shop/:shopId" element={<Shop />} />
+      </Routes>
+    </Router>
   );
 }
