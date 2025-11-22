@@ -35,7 +35,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // ---------- FILTER FUNCTION ----------
+  // ---------- FILTER LOGIC ----------
   useEffect(() => {
     let list = products;
 
