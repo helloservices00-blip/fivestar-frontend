@@ -5,17 +5,18 @@ import axios from "axios";
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [activeModule, setActiveModule] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [activeSubcategory, setActiveSubcategory] = useState(null);
-  const [activeVendor, setActiveVendor] = useState(null);
 
   const [modules, setModules] = useState([]);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
 
-  // ---------- FETCH DATA ----------
+  const [activeModule, setActiveModule] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeSubcategory, setActiveSubcategory] = useState(null);
+  const [activeVendor, setActiveVendor] = useState(null);
+
+  // ---------- FETCH ALL DATA ----------
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,7 +25,7 @@ export default function Home() {
           axios.get("https://fivestar-backend.onrender.com/api/modules"),
           axios.get("https://fivestar-backend.onrender.com/api/categories"),
           axios.get("https://fivestar-backend.onrender.com/api/subcategories"),
-          axios.get("https://fivestar-backend.onrender.com/api/vendors")
+          axios.get("https://fivestar-backend.onrender.com/api/vendors"),
         ]);
 
         setProducts(prodRes.data);
@@ -59,9 +60,20 @@ export default function Home() {
       {/* MODULE FILTER */}
       <h2 className="text-xl font-bold mb-2">Filter by Module</h2>
       <div className="flex flex-wrap gap-2 mb-4">
-        <button onClick={() => { setActiveModule(null); setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }} className="px-3 py-1 bg-blue-500 text-white rounded">All</button>
+        <button
+          onClick={() => { setActiveModule(null); setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }}
+          className="px-3 py-1 bg-blue-500 text-white rounded"
+        >
+          All
+        </button>
         {modules.map(m => (
-          <button key={m._id} onClick={() => { setActiveModule(m._id); setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }} className={`px-3 py-1 rounded ${activeModule === m._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>{m.name}</button>
+          <button
+            key={m._id}
+            onClick={() => { setActiveModule(m._id); setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }}
+            className={`px-3 py-1 rounded ${activeModule === m._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          >
+            {m.name}
+          </button>
         ))}
       </div>
 
@@ -70,9 +82,20 @@ export default function Home() {
         <>
           <h2 className="text-xl font-bold mb-2">Filter by Category</h2>
           <div className="flex flex-wrap gap-2 mb-4">
-            <button onClick={() => { setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }} className="px-3 py-1 bg-blue-500 text-white rounded">All</button>
+            <button
+              onClick={() => { setActiveCategory(null); setActiveSubcategory(null); setActiveVendor(null); }}
+              className="px-3 py-1 bg-blue-500 text-white rounded"
+            >
+              All
+            </button>
             {categories.filter(c => c.module._id === activeModule).map(c => (
-              <button key={c._id} onClick={() => { setActiveCategory(c._id); setActiveSubcategory(null); setActiveVendor(null); }} className={`px-3 py-1 rounded ${activeCategory === c._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>{c.name}</button>
+              <button
+                key={c._id}
+                onClick={() => { setActiveCategory(c._id); setActiveSubcategory(null); setActiveVendor(null); }}
+                className={`px-3 py-1 rounded ${activeCategory === c._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+              >
+                {c.name}
+              </button>
             ))}
           </div>
         </>
@@ -83,9 +106,20 @@ export default function Home() {
         <>
           <h2 className="text-xl font-bold mb-2">Filter by Subcategory</h2>
           <div className="flex flex-wrap gap-2 mb-4">
-            <button onClick={() => { setActiveSubcategory(null); setActiveVendor(null); }} className="px-3 py-1 bg-blue-500 text-white rounded">All</button>
+            <button
+              onClick={() => { setActiveSubcategory(null); setActiveVendor(null); }}
+              className="px-3 py-1 bg-blue-500 text-white rounded"
+            >
+              All
+            </button>
             {subcategories.filter(s => s.category?._id === activeCategory).map(s => (
-              <button key={s._id} onClick={() => { setActiveSubcategory(s._id); setActiveVendor(null); }} className={`px-3 py-1 rounded ${activeSubcategory === s._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>{s.name}</button>
+              <button
+                key={s._id}
+                onClick={() => { setActiveSubcategory(s._id); setActiveVendor(null); }}
+                className={`px-3 py-1 rounded ${activeSubcategory === s._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+              >
+                {s.name}
+              </button>
             ))}
           </div>
         </>
@@ -98,7 +132,13 @@ export default function Home() {
           <div className="flex flex-wrap gap-2 mb-4">
             <button onClick={() => setActiveVendor(null)} className="px-3 py-1 bg-blue-500 text-white rounded">All</button>
             {vendors.filter(v => filtered.some(p => p.vendor?._id === v._id)).map(v => (
-              <button key={v._id} onClick={() => setActiveVendor(v._id)} className={`px-3 py-1 rounded ${activeVendor === v._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>{v.shopName}</button>
+              <button
+                key={v._id}
+                onClick={() => setActiveVendor(v._id)}
+                className={`px-3 py-1 rounded ${activeVendor === v._id ? 'bg-blue-400 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+              >
+                {v.shopName}
+              </button>
             ))}
           </div>
         </>
